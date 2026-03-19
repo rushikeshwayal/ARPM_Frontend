@@ -11,6 +11,8 @@ import ProposalDocumentsCard from "./ProposalDocumentsCard";
 import ProposalStatusCard from "./ProposalStatusCard";
 import ReviewerTable from "./Reviewer/ReviewerTable";
 import PMReviewPanel from "./PMReview/PMReview";
+import CreateBudgetForm from "./Budget/CreateBudgetForm";
+import BudgetDetailsCard from "./Budget/BudgetDetailsCard";
 export default function PMProposalDetailsPage() {
 
     const { id } = useParams();
@@ -70,6 +72,7 @@ export default function PMProposalDetailsPage() {
                         <ProposalTabs
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
+                            proposal={proposal}
                         />
 
                         {activeTab === "details" && (
@@ -100,6 +103,25 @@ export default function PMProposalDetailsPage() {
                                 proposal={proposal}
 
                             />
+
+                        )}
+
+                        {activeTab === "budget" && (
+                            <CreateBudgetForm
+                                proposal={proposal}
+
+                            />
+
+
+                        )}
+
+                        {activeTab === "budget" && (
+                            <BudgetDetailsCard
+                                proposalId={id}
+
+                            />
+
+
                         )}
                     </div>
 

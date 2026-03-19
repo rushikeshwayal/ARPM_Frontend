@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TopNavBar from "../../../../layout/TopNavBar";
 import SideNavBarInvestigator from "../../SideNavBar/SideNavBar";
 import { useAuth } from "../../../context/AuthContext";
@@ -14,6 +14,10 @@ export default function CreateProposalPage() {
     const { user } = useAuth();
 
     const [proposalId, setProposalId] = useState(null);
+
+    // 🔥 PM USERS STATE
+    const [pmUsers, setPmUsers] = useState([]);
+    const [selectedPM, setSelectedPM] = useState("");
 
     const [formData, setFormData] = useState({
         title: "",
@@ -32,8 +36,29 @@ export default function CreateProposalPage() {
         required_resources_summary: ""
     });
 
-    const handleChange = (e) => {
+    // 🔥 FETCH PM USERS
+    useEffect(() => {
+        fetchPMUsers();
+    }, []);
 
+    const fetchPMUsers = async () => {
+        try {
+            const res = await fetch("http://127.0.0.1:8000/users/");
+            const data = await res.json();
+
+            // 🔥 filter project managers
+            const pmList = data.filter(
+                (u) => u.role === "project_manager"
+            );
+
+            setPmUsers(pmList);
+
+        } catch (err) {
+            console.error("Failed to fetch users", err);
+        }
+    };
+
+    const handleChange = (e) => {
         const { name, value } = e.target;
 
         setFormData(prev => ({
@@ -66,7 +91,8 @@ export default function CreateProposalPage() {
                 formData.proposed_duration_months &&
                 formData.rough_budget_estimate &&
                 formData.team_size_estimate &&
-                formData.required_resources_summary
+                formData.required_resources_summary &&
+                selectedPM // 🔥 ensure PM selected
             );
         }
 
@@ -85,6 +111,7 @@ export default function CreateProposalPage() {
 
     const prevStep = () => setStep(step - 1);
 
+    // 🔥 SUBMIT PROPOSAL
     const handleSubmitProposal = async () => {
 
         if (loading) return;
@@ -95,8 +122,11 @@ export default function CreateProposalPage() {
 
             const payload = {
                 ...formData,
-                lead_researcher_id: user.user_id
+                lead_researcher_id: user.user_id,
+                assigned_pm_id: parseInt(selectedPM) // 🔥 IMPORTANT
             };
+
+            console.log("Payload:", payload);
 
             const response = await fetch(
                 "http://127.0.0.1:8000/proposals/",
@@ -107,15 +137,23 @@ export default function CreateProposalPage() {
                 }
             );
 
+            if (!response.ok) {
+                const err = await response.json();
+                console.error(err);
+                throw new Error(err.detail || "Failed");
+            }
+
             const data = await response.json();
 
-            setProposalId(data.id);
+            console.log("Created Proposal:", data);
 
+            setProposalId(data.id);
             setStep(4);
 
         } catch (err) {
 
-            alert("Error creating proposal");
+            console.error(err);
+            alert("❌ Error creating proposal");
 
         } finally {
 
@@ -137,10 +175,7 @@ export default function CreateProposalPage() {
                     setIsSidebarOpen={setIsSidebarOpen}
                 />
 
-                <div
-                    className={`flex flex-col flex-grow transition-all duration-300 
-                    ${isSidebarOpen ? "ml-80" : "ml-16"}`}
-                >
+                <div className={`flex flex-col flex-grow ${isSidebarOpen ? "ml-80" : "ml-16"}`}>
 
                     <div className="p-8 max-w-5xl">
 
@@ -152,8 +187,8 @@ export default function CreateProposalPage() {
 
                             <StepIndicator step={step} />
 
+                            {/* STEP 1 */}
                             {step === 1 && (
-
                                 <div className="space-y-5">
 
                                     <h2 className="text-lg font-semibold">
@@ -177,11 +212,10 @@ export default function CreateProposalPage() {
                                     />
 
                                 </div>
-
                             )}
 
+                            {/* STEP 2 */}
                             {step === 2 && (
-
                                 <div className="space-y-5">
 
                                     <h2 className="text-lg font-semibold">
@@ -196,7 +230,6 @@ export default function CreateProposalPage() {
                                         "methodology_overview",
                                         "novelty"
                                     ].map(field => (
-
                                         <textarea
                                             key={field}
                                             name={field}
@@ -205,15 +238,13 @@ export default function CreateProposalPage() {
                                             onChange={handleChange}
                                             className="w-full border p-3 rounded-lg"
                                         />
-
                                     ))}
 
                                 </div>
-
                             )}
 
+                            {/* STEP 3 */}
                             {step === 3 && (
-
                                 <div className="space-y-5">
 
                                     <h2 className="text-lg font-semibold">
@@ -225,7 +256,6 @@ export default function CreateProposalPage() {
                                         "potential_impact",
                                         "required_resources_summary"
                                     ].map(field => (
-
                                         <textarea
                                             key={field}
                                             name={field}
@@ -234,7 +264,6 @@ export default function CreateProposalPage() {
                                             onChange={handleChange}
                                             className="w-full border p-3 rounded-lg"
                                         />
-
                                     ))}
 
                                     <input
@@ -261,21 +290,40 @@ export default function CreateProposalPage() {
                                         className="w-full border p-3 rounded-lg"
                                     />
 
-                                </div>
+                                    {/* 🔥 PM DROPDOWN */}
+                                    <div>
+                                        <label className="block mb-2 font-medium">
+                                            Assign Project Manager
+                                        </label>
 
+                                        <select
+                                            value={selectedPM}
+                                            onChange={(e) => setSelectedPM(e.target.value)}
+                                            className="w-full border p-3 rounded-lg"
+                                        >
+                                            <option value="">Select PM</option>
+
+                                            {pmUsers.map(pm => (
+                                                <option key={pm.id} value={pm.id}>
+                                                    {pm.email}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                </div>
                             )}
 
+                            {/* STEP 4 */}
                             {step === 4 && (
-
                                 <StepDocumentUpload
                                     proposalId={proposalId}
                                     userId={user.user_id}
                                 />
-
                             )}
 
+                            {/* BUTTONS */}
                             {step <= 3 && (
-
                                 <div className="flex justify-between mt-8">
 
                                     {step > 1 && (
@@ -300,14 +348,13 @@ export default function CreateProposalPage() {
                                         <button
                                             onClick={handleSubmitProposal}
                                             disabled={loading}
-                                            className="px-6 py-2 bg-green-600 text-white rounded-lg disabled:opacity-50"
+                                            className="px-6 py-2 bg-green-600 text-white rounded-lg"
                                         >
                                             {loading ? "Creating..." : "Create Proposal"}
                                         </button>
                                     )}
 
                                 </div>
-
                             )}
 
                         </div>
@@ -319,6 +366,5 @@ export default function CreateProposalPage() {
             </div>
 
         </div>
-
     );
 }

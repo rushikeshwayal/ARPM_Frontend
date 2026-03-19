@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 export default function StepDocumentUpload({ proposalId, userId }) {
 
     const navigate = useNavigate();
-
     const [uploading, setUploading] = useState(false);
 
     const [documents, setDocuments] = useState([
@@ -16,16 +15,17 @@ export default function StepDocumentUpload({ proposalId, userId }) {
     ]);
 
     const handleFileChange = (index, file) => {
-
         const updated = [...documents];
         updated[index].file = file;
-
         setDocuments(updated);
     };
 
     const uploadDocuments = async () => {
 
-        if (uploading) return;
+        if (!proposalId) {
+            alert("Proposal ID missing ❌");
+            return;
+        }
 
         setUploading(true);
 
@@ -43,34 +43,33 @@ export default function StepDocumentUpload({ proposalId, userId }) {
                 formData.append("uploaded_by", userId);
                 formData.append("file", doc.file);
 
-                await fetch(
+                const res = await fetch(
                     "http://127.0.0.1:8000/proposals/upload-document",
                     {
                         method: "POST",
                         body: formData
                     }
                 );
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    console.error("Upload error:", err);
+                    throw new Error(err.detail || "Upload failed");
+                }
             }
 
-            alert("Documents uploaded successfully");
-
-            // redirect to proposals page
+            alert("✅ Documents uploaded successfully");
             navigate("/researcher/proposals");
 
         } catch (err) {
-
             console.error(err);
-            alert("Upload failed");
-
+            alert("❌ Upload failed");
         } finally {
-
             setUploading(false);
-
         }
     };
 
     return (
-
         <div className="space-y-6">
 
             <h2 className="text-lg font-semibold">
@@ -78,7 +77,6 @@ export default function StepDocumentUpload({ proposalId, userId }) {
             </h2>
 
             {documents.map((doc, index) => (
-
                 <div key={index} className="border rounded-lg p-4">
 
                     <label className="block mb-2 font-medium">
@@ -94,7 +92,6 @@ export default function StepDocumentUpload({ proposalId, userId }) {
                     />
 
                 </div>
-
             ))}
 
             <button
@@ -106,6 +103,5 @@ export default function StepDocumentUpload({ proposalId, userId }) {
             </button>
 
         </div>
-
     );
 }
