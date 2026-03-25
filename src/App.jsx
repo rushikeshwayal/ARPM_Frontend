@@ -15,6 +15,10 @@ import ReviewerProposalDetailsPage from "./components/Reviewer/Proposal/Proposal
 import CommitteeHome from "./components/Committee/Home/Home"
 import CommitteeProposalPage from "./components/Committee/Proposal/Main/ProposalPage"
 import CommitteeProposalDetailsPage from "./components/Committee/Proposal/Proposal Details/ProposalDetailsPage"
+import CreateProjectPage from "./components/PM/Project/Main/CreateProjectModal"
+import CommitteeProjectDetailPage from "./components/Committee/Project/ProjectDetail/CommitteeProjectDetailPage"
+import ProjectDetailPage from "./components/PM/Project/ProjectDetail/Projectdetailpage"
+import ResearcherProjectDetailPage from "./components/Researcher/Project/ProjectDetail/ResearcherProjectDetailPage"
 
 
 
@@ -79,6 +83,27 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/manager/projects/create"
+        element={
+          <ProtectedRoute>
+            <CreateProjectPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager/project/:id"
+        element={
+          <ProtectedRoute>
+            <ProjectDetailPage />
+          </ProtectedRoute>
+        }
+      />
+
+
+
       <Route
         path="/manager/proposals"
         element={
@@ -145,6 +170,32 @@ export default function App() {
         element={
           <ProtectedRoute>
             <CommitteeProposalDetailsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/committee/projects"
+        element={
+          <ProtectedRoute>
+            <CommitteeHome />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/committee/project/:id"
+        element={
+          <ProtectedRoute>
+            <CommitteeProjectDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/researcher/project/:id"
+        element={
+          <ProtectedRoute>
+            <ResearcherProjectDetailPage />
           </ProtectedRoute>
         }
       />

@@ -1,76 +1,40 @@
 import { useEffect, useState } from "react";
 
-export default function useProjects() {
+export default function useProjects(pmId) {
 
     const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
 
-        const fetchProjects = async () => {
+        if (!pmId) return;
 
+        const fetchData = async () => {
             try {
+                setLoading(true);
 
-                const res = await fetch("http://127.0.0.1:8000/projects");
-
-                if (!res.ok) {
-                    throw new Error("Failed to fetch projects");
-                }
+                const res = await fetch(
+                    `http://127.0.0.1:8000/projects/pm/${pmId}`
+                );
 
                 const data = await res.json();
 
-                // Filter R&D projects
-                const rndProjects = data.filter(
-                    (project) => project.type === "R_D"
-                );
-
-                // If API returns empty → use dummy data
-                if (rndProjects.length === 0) {
-                    setProjects(dummyProjects);
+                if (Array.isArray(data)) {
+                    setProjects(data);
                 } else {
-                    setProjects(rndProjects);
+                    setProjects([]);
                 }
 
-            } catch (err) {
-
-                // If API fails → use dummy data
-                setProjects(dummyProjects);
-                setError(null);
-
+            } catch {
+                setProjects([]);
             } finally {
-
                 setLoading(false);
-
             }
-
         };
 
-        fetchProjects();
+        fetchData();
 
-    }, []);
+    }, [pmId]);
 
-    return { projects, loading, error };
+    return { projects, loading };
 }
-
-
-const dummyProjects = [
-    {
-        id: 1,
-        title: "AI Crop Disease Detection",
-        description: "Using deep learning to detect plant diseases from leaf images.",
-        type: "R_D"
-    },
-    {
-        id: 2,
-        title: "Smart Irrigation System",
-        description: "IoT based irrigation system for efficient water management.",
-        type: "R_D"
-    },
-    {
-        id: 3,
-        title: "Autonomous Drone Monitoring",
-        description: "Drone system to monitor agricultural fields automatically.",
-        type: "R_D"
-    }
-];
