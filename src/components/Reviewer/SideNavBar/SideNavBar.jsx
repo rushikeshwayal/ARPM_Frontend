@@ -48,6 +48,14 @@ export default function SideNavBarInvestigator({ isSidebarOpen, setIsSidebarOpen
                                 Proposals
                             </Link>
                         </li>
+                         <li>
+                            <Link
+                                to="/communication"
+                                className={linkStyle("/communication")}
+                            >
+                                Communication
+                            </Link>
+                        </li>
 
                         {/*   <li>
                             <Link

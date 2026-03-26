@@ -19,6 +19,8 @@ import CreateProjectPage from "./components/PM/Project/Main/CreateProjectModal"
 import CommitteeProjectDetailPage from "./components/Committee/Project/ProjectDetail/CommitteeProjectDetailPage"
 import ProjectDetailPage from "./components/PM/Project/ProjectDetail/Projectdetailpage"
 import ResearcherProjectDetailPage from "./components/Researcher/Project/ProjectDetail/ResearcherProjectDetailPage"
+import Communication from "./components/Communication/Communication";
+
 
 
 
@@ -196,6 +198,15 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ResearcherProjectDetailPage />
+          </ProtectedRoute>
+        }
+      />
+
+        <Route 
+        path="/communication"
+        element={
+          <ProtectedRoute>
+            <Communication />
           </ProtectedRoute>
         }
       />
