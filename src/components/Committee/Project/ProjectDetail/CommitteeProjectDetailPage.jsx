@@ -9,6 +9,7 @@ import CommitteeTabs from "./CommitteeTabs";
 import ProjectOverviewCard from "../../../PM/Project/ProjectDetail/ProjectOverviewCard";
 import CommitteeBudgetTab from "../Main/CommitteeBudgetTab";
 import ReleasePlanTab from "../../../PM/Project/ProjectBudget/ReleasePlanTab";
+import CommitteePhaseTab from "./CommitteeTabs";
 
 export default function CommitteeProjectDetailPage() {
 
@@ -16,14 +17,21 @@ export default function CommitteeProjectDetailPage() {
 
     const [project, setProject] = useState(null);
     const [budget, setBudget] = useState(null);
+    const [releasePlan, setReleasePlan] = useState(null);
     const [activeTab, setActiveTab] = useState("overview");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    useEffect(() => { fetchProject(); fetchBudget(); }, [id]);
+    useEffect(() => { fetchAll(); }, [id]);
+
+    const fetchAll = () => {
+        fetchProject();
+        fetchBudget();
+        fetchReleasePlan();
+    };
 
     const fetchProject = async () => {
         const res = await fetch(`http://127.0.0.1:8000/projects/${id}`);
-        setProject(await res.json());
+        if (res.ok) setProject(await res.json());
     };
 
     const fetchBudget = async () => {
@@ -31,11 +39,24 @@ export default function CommitteeProjectDetailPage() {
         if (res.ok) setBudget(await res.json());
     };
 
+    const fetchReleasePlan = async () => {
+        const res = await fetch(`http://127.0.0.1:8000/release-plan/project/${id}`);
+        if (res.ok) {
+            const data = await res.json();
+            data.tranches = data.tranches || [];
+            setReleasePlan(data);
+        }
+    };
+
     if (!project) return (
         <div className="flex items-center justify-center h-screen text-gray-400">
             Loading...
         </div>
     );
+
+    // ✅ Phases tab unlocks when at least one tranche released
+    const hasReleasedTranche = (releasePlan?.tranches || [])
+        .some(t => t.status === "released");
 
     return (
         <div>
@@ -58,12 +79,15 @@ export default function CommitteeProjectDetailPage() {
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
                             budgetStatus={budget?.status}
+                            hasReleasedTranche={hasReleasedTranche}
                         />
 
+                        {/* Overview — read-only */}
                         {activeTab === "overview" && (
                             <ProjectOverviewCard project={project} />
                         )}
 
+                        {/* Budget — committee approves/requests revision */}
                         {activeTab === "budget" && (
                             <CommitteeBudgetTab
                                 project={project}
@@ -71,12 +95,17 @@ export default function CommitteeProjectDetailPage() {
                             />
                         )}
 
-                        {/* ✅ Committee has full control of release plan */}
+                        {/* Release Plan — committee manages tranches */}
                         {activeTab === "release_plan" && (
                             <ReleasePlanTab
                                 project={project}
                                 userRole="committee"
                             />
+                        )}
+
+                        {/* ✅ Phases — committee sees completed phases + reviewed steps only */}
+                        {activeTab === "phases" && (
+                            <CommitteePhaseTab project={project} />
                         )}
 
                     </div>

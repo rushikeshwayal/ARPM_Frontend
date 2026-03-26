@@ -1,12 +1,20 @@
-// ── Committee Tabs ────────────────────────────────────────────────────────────
-
-export default function CommitteeTabs({ activeTab, setActiveTab, budgetStatus }) {
-
+export default function CommitteeTabs({
+    activeTab, setActiveTab, budgetStatus, hasReleasedTranche
+}) {
     const TABS = [
         { key: "overview", label: "Overview" },
         { key: "budget", label: "Budget" },
+
+        // Release Plan — visible once budget approved
         ...(budgetStatus === "approved"
             ? [{ key: "release_plan", label: "Release Plan" }]
+            : []
+        ),
+
+        // ✅ Phases — visible to committee once a tranche is released
+        // Committee sees completed phases + PM-reviewed steps only
+        ...(hasReleasedTranche
+            ? [{ key: "phases", label: "Phases" }]
             : []
         ),
     ];
