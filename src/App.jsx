@@ -20,9 +20,10 @@ import CommitteeProjectDetailPage from "./components/Committee/Project/ProjectDe
 import ProjectDetailPage from "./components/PM/Project/ProjectDetail/Projectdetailpage"
 import ResearcherProjectDetailPage from "./components/Researcher/Project/ProjectDetail/ResearcherProjectDetailPage"
 import Communication from "./components/Communication/Communication";
-
-
-
+import DashboardPM from "./components/PM/Dashboard/dashboard"
+import Dashboardcommittee from "./components/Committee/Dashboard/dashboard"
+import Dashboardresearcher from "./components/Researcher/Dashboard/dashboard"
+import Dashboardreviewer from "./components/Reviewer/Dashboard/dashboard" 
 
 
 
@@ -210,6 +211,43 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+       <Route 
+        path="/manager/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPM/>
+          </ProtectedRoute>
+        }
+      />
+
+        <Route
+        path="/committee/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboardcommittee />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/researcher/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboardresearcher />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/reviewer/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboardreviewer />
+          </ProtectedRoute>
+        }
+      />
+
 
     </Routes>
   )
