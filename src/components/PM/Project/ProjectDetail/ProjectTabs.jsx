@@ -2,6 +2,7 @@ export default function ProjectTabs({ activeTab, setActiveTab, budgetStatus, has
 
     const TABS = [
         { key: "overview", label: "Overview" },
+        { key: "statistics", label: "Statistics" },
         { key: "budget", label: "Budget" },
         ...(budgetStatus === "approved"
             ? [{ key: "release_plan", label: "Release Plan" }]

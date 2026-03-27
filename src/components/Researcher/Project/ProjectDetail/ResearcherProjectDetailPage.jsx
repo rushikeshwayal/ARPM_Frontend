@@ -10,6 +10,7 @@ import ResearcherOverviewCard  from "./ResearcherOverviewCard";
 import ResearcherBudgetView    from "../ProjectBudget/ResearcherBudgetView";
 import ResearcherReleasePlanView from "../ProjectBudget/ResearcherReleasePlanView";
 import ResearcherPhaseTab      from "../ProjectPhase/ResearcherPhaseTab";
+import CommitteeStatisticsTab from "../../../../components/CommitteeStatisticsTab";
 
 export default function ResearcherProjectDetailPage() {
 
@@ -86,6 +87,10 @@ export default function ResearcherProjectDetailPage() {
                         {/* Overview — full read-only project details */}
                         {activeTab === "overview" && (
                             <ResearcherOverviewCard project={project} />
+                        )}
+
+                         {activeTab === "statistics" && (
+                            <CommitteeStatisticsTab projectId={id} />
                         )}
 
                         {/* Budget — read-only, shows status + costs + docs */}

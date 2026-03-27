@@ -3,6 +3,7 @@ export default function ResearcherProjectTabs({
 }) {
     const TABS = [
         { key: "overview", label: "Overview" },
+        { key: "statistics", label: "Statistics" },
 
         // Budget visible once it exists
         ...(budgetStatus

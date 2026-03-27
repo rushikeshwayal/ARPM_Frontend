@@ -7,6 +7,7 @@ export default function CommitteeTabs({
 }) {
     const TABS = [
         { key: "overview", label: "Overview" },
+        { key: "statistics", label: "Statistics" },
         { key: "budget", label: "Budget" },
 
         ...(budgetStatus === "approved"

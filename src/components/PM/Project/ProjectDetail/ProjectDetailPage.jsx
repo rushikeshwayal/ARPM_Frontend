@@ -10,6 +10,7 @@ import ProjectOverviewCard from "./ProjectOverviewCard";
 import ProjectBudgetTab from "../ProjectBudget/ProjectBudgetTab";
 import ReleasePlanTab from "../ProjectBudget/ReleasePlanTab";
 import PhaseTab from "../ProjectPhase/PhaseTab";
+import CommitteeStatisticsTab from "../../../../components/CommitteeStatisticsTab";
 
 export default function ProjectDetailPage() {
 
@@ -81,6 +82,10 @@ export default function ProjectDetailPage() {
 
                         {activeTab === "overview" && (
                             <ProjectOverviewCard project={project} />
+                        )}
+
+                         {activeTab === "statistics" && (
+                            <CommitteeStatisticsTab projectId={id} />
                         )}
 
                         {activeTab === "budget" && (

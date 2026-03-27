@@ -245,7 +245,7 @@ function PMDashboardContent() {
           </p>
         </div>
         <span className="bg-purple-600 text-white rounded-full px-4 py-1.5 text-xs font-bold tracking-wide shadow-md">
-          Project Manager
+        
         </span>
       </div>
 
