@@ -28,8 +28,8 @@ export default function CommitteeTabs({
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
                     className={`pb-2 capitalize transition-all duration-200 ${activeTab === tab.key
-                            ? "border-b-2 border-purple-600 text-purple-600 font-medium"
-                            : "text-gray-500 hover:text-purple-500"
+                        ? "border-b-2 border-purple-600 text-purple-600 font-medium"
+                        : "text-gray-500 hover:text-purple-500"
                         }`}
                 >
                     {tab.label}
