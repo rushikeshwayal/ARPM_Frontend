@@ -19,10 +19,10 @@ function InfoRow({ label, value }) {
 
 function StatusBadge({ status }) {
     const map = {
-        draft:              { label: "Draft",              cls: "bg-gray-100 text-gray-600"   },
-        submitted:          { label: "Submitted",          cls: "bg-blue-100 text-blue-700"   },
-        approved:           { label: "Approved ✓",         cls: "bg-green-100 text-green-700" },
-        revision_requested: { label: "Revision Requested", cls: "bg-red-100 text-red-600"     },
+        draft: { label: "Draft", cls: "bg-gray-100 text-gray-600" },
+        submitted: { label: "Submitted", cls: "bg-blue-100 text-blue-700" },
+        approved: { label: "Approved ✓", cls: "bg-green-100 text-green-700" },
+        revision_requested: { label: "Revision Requested", cls: "bg-red-100 text-red-600" },
     };
     const s = map[status] || { label: status, cls: "bg-gray-100 text-gray-500" };
     return (
@@ -38,8 +38,8 @@ function formatINR(val) {
 }
 
 export default function ResearcherBudgetView({ projectId }) {
-    const [budget,  setBudget]  = useState(null);
-    const [docs,    setDocs]    = useState([]);
+    const [budget, setBudget] = useState(null);
+    const [docs, setDocs] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => { fetchBudget(); }, [projectId]);
@@ -88,11 +88,10 @@ export default function ResearcherBudgetView({ projectId }) {
 
             {/* Committee remarks */}
             {budget.committee_remarks && (
-                <div className={`rounded-xl border p-4 ${
-                    budget.status === "approved"
+                <div className={`rounded-xl border p-4 ${budget.status === "approved"
                         ? "bg-green-50 border-green-200"
                         : "bg-yellow-50 border-yellow-200"
-                }`}>
+                    }`}>
                     <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
                         Committee Remarks
                     </p>
@@ -108,11 +107,11 @@ export default function ResearcherBudgetView({ projectId }) {
             {/* Cost breakdown */}
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
                 <SectionTitle icon="💰" title="Cost Breakdown" />
-                <InfoRow label="Compute Cost"       value={formatINR(budget.compute_cost)} />
-                <InfoRow label="Data Acquisition"   value={formatINR(budget.data_acquisition_cost)} />
-                <InfoRow label="Manpower"           value={formatINR(budget.manpower_cost)} />
-                <InfoRow label="Infrastructure"     value={formatINR(budget.infrastructure_cost)} />
-                <InfoRow label="Miscellaneous"      value={formatINR(budget.miscellaneous_cost)} />
+                <InfoRow label="Compute Cost" value={formatINR(budget.compute_cost)} />
+                <InfoRow label="Data Acquisition" value={formatINR(budget.data_acquisition_cost)} />
+                <InfoRow label="Manpower" value={formatINR(budget.manpower_cost)} />
+                <InfoRow label="Infrastructure" value={formatINR(budget.infrastructure_cost)} />
+                <InfoRow label="Miscellaneous" value={formatINR(budget.miscellaneous_cost)} />
                 <div className="flex items-center justify-between bg-purple-50 rounded-lg px-4 py-3 mt-3">
                     <span className="text-sm font-semibold text-purple-700">Total Budget</span>
                     <span className="text-xl font-bold text-purple-700">
