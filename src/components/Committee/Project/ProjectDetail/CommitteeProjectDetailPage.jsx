@@ -9,7 +9,7 @@ import CommitteeTabs from "./CommitteeTabs";
 import ProjectOverviewCard from "../../../PM/Project/ProjectDetail/ProjectOverviewCard";
 import CommitteeBudgetTab from "../Main/CommitteeBudgetTab";
 import ReleasePlanTab from "../../../PM/Project/ProjectBudget/ReleasePlanTab";
-import CommitteePhaseTab from "./CommitteeTabs";
+import CommitteePhaseTab from "./Committeephasetab";
 
 export default function CommitteeProjectDetailPage() {
 
@@ -54,7 +54,6 @@ export default function CommitteeProjectDetailPage() {
         </div>
     );
 
-    // ✅ Phases tab unlocks when at least one tranche released
     const hasReleasedTranche = (releasePlan?.tranches || [])
         .some(t => t.status === "released");
 
@@ -82,12 +81,10 @@ export default function CommitteeProjectDetailPage() {
                             hasReleasedTranche={hasReleasedTranche}
                         />
 
-                        {/* Overview — read-only */}
                         {activeTab === "overview" && (
                             <ProjectOverviewCard project={project} />
                         )}
 
-                        {/* Budget — committee approves/requests revision */}
                         {activeTab === "budget" && (
                             <CommitteeBudgetTab
                                 project={project}
@@ -95,7 +92,6 @@ export default function CommitteeProjectDetailPage() {
                             />
                         )}
 
-                        {/* Release Plan — committee manages tranches */}
                         {activeTab === "release_plan" && (
                             <ReleasePlanTab
                                 project={project}
@@ -103,7 +99,6 @@ export default function CommitteeProjectDetailPage() {
                             />
                         )}
 
-                        {/* ✅ Phases — committee sees completed phases + reviewed steps only */}
                         {activeTab === "phases" && (
                             <CommitteePhaseTab project={project} />
                         )}
