@@ -137,6 +137,7 @@ function DocRow({ row, index, onChange, onRemove }) {
 function DocumentList({ budgetId, canDelete, refreshTrigger }) {
     const [docs, setDocs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedDoc, setExpandedDoc] = useState(null);
 
     const fetchDocs = async () => {
         setLoading(true);
@@ -162,33 +163,141 @@ function DocumentList({ budgetId, canDelete, refreshTrigger }) {
     return (
         <div className="space-y-2 mb-4">
             {docs.map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3 border border-gray-100">
-                    <div className="flex items-center gap-3">
-                        <span className="text-xl">📄</span>
-                        <div>
-                            <p className="text-sm font-medium text-gray-700">{doc.document_title}</p>
-                            <p className="text-xs text-gray-400 capitalize">
-                                {doc.document_type.replace(/_/g, " ")}
-                            </p>
+                <div key={doc.id} className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-100">
+
+                    {/* Top Row */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <span className="text-xl">📄</span>
+                            <div>
+                                <p className="text-sm font-medium text-gray-700">{doc.document_title}</p>
+                                <p className="text-xs text-gray-400 capitalize">
+                                    {doc.document_type.replace(/_/g, " ")}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            <a
+                                href={doc.file_path}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-xs text-purple-600 hover:underline font-medium"
+                            >
+                                View ↗
+                            </a>
+
+                            {canDelete && (
+                                <button
+                                    onClick={() => handleDelete(doc.id)}
+                                    className="text-xs text-red-400 hover:text-red-600 transition"
+                                >
+                                    Delete
+                                </button>
+                            )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <a
-                            href={doc.file_path}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-xs text-purple-600 hover:underline font-medium"
-                        >
-                            View ↗
-                        </a>
-                        {canDelete && (
-                            <button
-                                onClick={() => handleDelete(doc.id)}
-                                className="text-xs text-red-400 hover:text-red-600 transition"
-                            >
-                                Delete
-                            </button>
-                        )}
+
+                    {/* 🔥 SUMMARY SECTION */}
+                    <div className="mt-3 border-t pt-3">
+
+                        {/* 🔥 AI SUMMARY SECTION */}
+                        <div className="mt-4">
+
+                            {/* ⏳ Loading State */}
+                            {!doc.doc_summary && (
+                                <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-100 px-3 py-2 rounded-lg animate-pulse">
+                                    <span>🤖</span>
+                                    <span>AI is analyzing document...</span>
+                                </div>
+                            )}
+
+                            {/* ✅ Summary Card */}
+                            {doc.doc_summary && (
+                                <div className="bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl p-4 shadow-sm">
+
+                                    {/* Header */}
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p className="text-xs text-purple-500 font-semibold uppercase tracking-wide">
+                                                AI Summary
+                                            </p>
+                                            <h4 className="text-sm font-semibold text-gray-800">
+                                                {doc.doc_summary.title}
+                                            </h4>
+                                        </div>
+
+                                        <button
+                                            onClick={() =>
+                                                setExpandedDoc(expandedDoc === doc.id ? null : doc.id)
+                                            }
+                                            className="text-xs text-purple-600 hover:underline"
+                                        >
+                                            {expandedDoc === doc.id ? "Hide" : "View"}
+                                        </button>
+                                    </div>
+
+                                    {/* Overview */}
+                                    <p className="text-xs text-gray-600 leading-relaxed mb-2">
+                                        {doc.doc_summary.overview}
+                                    </p>
+
+                                    {/* Key Points */}
+                                    {doc.doc_summary.key_points?.length > 0 && (
+                                        <div className="mb-2">
+                                            <p className="text-xs font-semibold text-gray-500 mb-1">
+                                                Key Insights
+                                            </p>
+                                            <ul className="text-xs text-gray-600 space-y-1">
+                                                {doc.doc_summary.key_points.slice(0, 2).map((pt, i) => (
+                                                    <li key={i} className="flex gap-2">
+                                                        <span className="text-purple-500">•</span>
+                                                        <span>{pt}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Expand Section */}
+                                    {expandedDoc === doc.id && (
+                                        <div className="mt-3 space-y-3 border-t pt-3">
+
+                                            {/* Sections */}
+                                            {doc.doc_summary.sections?.map((sec, i) => (
+                                                <div key={i}>
+                                                    <p className="text-xs font-semibold text-gray-700">
+                                                        {sec.heading}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600">
+                                                        {sec.summary}
+                                                    </p>
+                                                </div>
+                                            ))}
+
+                                            {/* Entities */}
+                                            {doc.doc_summary.important_entities?.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs font-semibold text-gray-500 mb-1">
+                                                        Entities
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {doc.doc_summary.important_entities.slice(0, 6).map((e, i) => (
+                                                            <span
+                                                                key={i}
+                                                                className="text-[10px] bg-purple-100 text-purple-700 px-2 py-1 rounded-full"
+                                                            >
+                                                                {e}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             ))}
